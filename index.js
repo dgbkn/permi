@@ -205,7 +205,7 @@ const io = require('socket.io')(server, {
     methods: ["GET", "POST"]
   }
 });
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
