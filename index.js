@@ -266,7 +266,8 @@ async function initialFetch(){
   .then(async json => {
     json = [...json,
       {"Timestamp":"10/11/2023 14:58:34","Name":"Mankirat Singh","Email id":"satviktola@gmail.com","Phone no. ":"9888034284","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"},
-      {"Timestamp":"10/11/2023 14:58:34","Name":"Dev Singh","Email id":"dev@gmail.com","Phone no. ":"9413737698","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"}
+      {"Timestamp":"10/11/2023 14:58:34","Name":"Dev Singh","Email id":"dev@gmail.com","Phone no. ":"9413737698","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"},
+      {"Timestamp":"10/11/2023 14:58:34","Name":"Dev Singh Jori","Email id":"dev@gmail.com","Phone no. ":"7973632918","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"}
     ];
 
     fs.writeFileSync("responses.json", JSON.stringify(json), err => {
