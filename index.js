@@ -15,6 +15,8 @@ var entryCode = "";
 var entryCount = 0;
 var defaultSocket;
 
+var randC = 0;
+
 
 async function updateEntryCode(phone = "",saveCsv="") {
 
@@ -31,8 +33,15 @@ async function updateEntryCode(phone = "",saveCsv="") {
 
     if (!user) {
       await User.create({ phone: phone });
-      var randNo = Math.floor(100000 + Math.random() * 900000);
-      entryCode = randNo + "";
+      randC++;
+
+      if(randC == 2){
+        var randNo = Math.floor(100000 + Math.random() * 900000);
+        entryCode = randNo + "";
+        randC = 0;
+      }
+      
+
       entryCount = await User.count();
       defaultSocket.broadcast.emit('entry', { code: entryCode, count: entryCount, phone: phone });
       defaultSocket.emit('entry', { code: entryCode, count: entryCount, phone: phone });
