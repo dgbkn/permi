@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/0dd424b2-52ea-4362-9e3e-51cd190172c5/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/mlscpermi",
+    "appService.deploySubpath": "."
+}

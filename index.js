@@ -95,8 +95,15 @@ async function connectToWhatsApp() {
         message = m?.messages[0].message?.conversation;
       }catch(er){
         console.log(er);
+        message ="";
       }
     }
+
+
+    //do all this only when //
+
+
+    if (message == entryCode) {
     
     var phone;
 
@@ -108,21 +115,18 @@ async function connectToWhatsApp() {
     }
 
 
-  var isPhoneExists =   await fetch("https://pwsheets.vercel.app/api/getDirectRange?range=A1:I4000&sheetId=1o6zmnshWMuv6e8DocjzYMSHD5uv9qWHt9SFsjs6tFgQ")
-  .then(res => res.json())
-  .then(async json => {
-      json = [...json,
-        {"Timestamp":"10/11/2023 14:58:34","Name":"Mankirat Singh","Email id":"satviktola@gmail.com","Phone no. ":"9888034284","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"},
-        {"Timestamp":"10/11/2023 14:58:34","Name":"Dev Singh","Email id":"dev@gmail.com","Phone no. ":"9413737698","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"}
-      ];
+  var json_D = require('./responses');
+  json_D = [...json_D,
+    {"Timestamp":"10/11/2023 14:58:34","Name":"Mankirat Singh","Email id":"satviktola@gmail.com","Phone no. ":"9888034284","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"},
+    {"Timestamp":"10/11/2023 14:58:34","Name":"Dev Singh","Email id":"dev@gmail.com","Phone no. ":"9413737698","Roll number / Application number":"135587","Branch":"COBS","Gender":"Male","Hostel":"K"}
+  ];
 
-      no_in_json = json.find(x => x['Phone no. '] == phone || x['Phone no. '].replace("+91","") == phone );
+
+  var isPhoneExists = async () => {
+      no_in_json = json_D.find(x => x['Phone no. '] == phone || x['Phone no. '].replace("+91","") == phone );
       console.log(no_in_json);
-
-      const csv = await converter.json2csv(no_in_json);
-      console.log(csv);
       return no_in_json;
-    }).catch(err => console.log(err));
+    };
 
 
     if (phone) {
@@ -134,19 +138,16 @@ async function connectToWhatsApp() {
       }
 
       if(phone == phone_m){
-        if (message == entryCode) {
         console.log("CODE FOUND");
         updateEntryCode(phone);
         var csv = await converter.json2csv(isPhoneExists);
         await saveCsv(csv);
-      }
+      
     }else{
-      if (message == entryCode) {
       sockClient.sendMessage(getJid(phone), { text: "Not Registered 🫠" });
-      }
     }
   }
-
+    }
     console.log("message is:" + message + ",SENT BY:" + m.messages[0].key.remoteJid);
     // console.log('Logged in to', m.messages[0].key.remoteJid);
   })
@@ -217,7 +218,11 @@ app.get('/', function(req, res, next) {
 });
 
 app.get('/backup', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dev.sqlite'));
+  try{
+    res.sendFile(path.join(__dirname, 'entryDone.csv'));
+  }catch(ex){
+    res.send(ex);
+  }
 });
 
 
@@ -235,6 +240,23 @@ io.on('connection', (socket) => {
   });
 })
 
+
+initialFetch();
+
 server.listen(port, function() {
   console.log('CORS-enabled web server listening on port ' + port)
 })
+
+
+
+async function initialFetch(){
+  await fetch("https://pwsheets.vercel.app/api/getDirectRange?range=A1:I4000&sheetId=1o6zmnshWMuv6e8DocjzYMSHD5uv9qWHt9SFsjs6tFgQ")
+  .then(res => res.json())
+  .then(async json => {
+    fs.writeFileSync("responses.json", JSON.stringify(json), err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }).catch(err => console.log(err));
+}
