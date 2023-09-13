@@ -16,7 +16,7 @@ var entryCount = 0;
 var defaultSocket;
 
 
-async function updateEntryCode(phone = "") {
+async function updateEntryCode(phone = "",saveCsv="") {
 
   if (!phone) {
     var randNo = Math.floor(100000 + Math.random() * 900000);
@@ -37,6 +37,9 @@ async function updateEntryCode(phone = "") {
       defaultSocket.broadcast.emit('entry', { code: entryCode, count: entryCount, phone: phone });
       defaultSocket.emit('entry', { code: entryCode, count: entryCount, phone: phone });
       sockClient.sendMessage(getJid(phone), { text: "Entry Done ✅" });
+      if(saveCsv){
+        saveCsv();
+      }
 
     } else {
       sockClient.sendMessage(getJid(phone), { text: "Entry Already Done ❌" });
@@ -116,12 +119,17 @@ async function connectToWhatsApp() {
 
 
   var json_D = require('./responses');
+  
+  var isPhoneExistsFunc = () => {
+    no_in_json = json_D.find(x => x['Phone no. '] == phone || x['Phone no. '].replace("+91","") == phone );
+    console.log(no_in_json);
+    return no_in_json;
+  };
 
-  var isPhoneExists = async () => {
-      no_in_json = json_D.find(x => x['Phone no. '] == phone || x['Phone no. '].replace("+91","") == phone );
-      console.log(no_in_json);
-      return no_in_json;
-    };
+  isPhoneExists = isPhoneExistsFunc();
+  
+  console.log(isPhoneExists);
+
 
 
     if (phone) {
@@ -134,9 +142,8 @@ async function connectToWhatsApp() {
 
       if(phone == phone_m){
         console.log("CODE FOUND");
-        updateEntryCode(phone);
         var csv = await converter.json2csv(isPhoneExists);
-        await saveCsv(csv);
+        updateEntryCode(phone,() => saveCsv(csv));
       
     }else{
       sockClient.sendMessage(getJid(phone), { text: "Not Registered 🫠" });
